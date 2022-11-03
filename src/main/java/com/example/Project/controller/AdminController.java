@@ -24,6 +24,7 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String adminHome(){
+
         return "adminHome";
     }
 
