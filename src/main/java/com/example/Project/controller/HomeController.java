@@ -30,7 +30,7 @@ public class HomeController {
     }
     @GetMapping({"/shop/category/{id}"})
     public String shopByCategory(Model model, @PathVariable int id){
-        model.addAttribute(" categories", categoryService.getAllCategory());
+        model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProductsByCategoryId(id));
 
         return "shop";
@@ -38,7 +38,7 @@ public class HomeController {
     }
     @GetMapping({"/shop/viewproduct/{id}"})
     public String viewProduct(Model model, @PathVariable int id){
-        model.addAttribute(" product", productService.getProductById(id).get());
+        model.addAttribute("product", productService.getProductById(id).get());
 
 
         return "viewProduct";
