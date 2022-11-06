@@ -26,52 +26,56 @@ public class AdminController {
     ProductService productService;
 
     @GetMapping("/admin")
-    public String adminHome(){
+    public String adminHome() {
 
         return "adminHome";
     }
 
     @GetMapping("/admin/categories")
-    public String getCat(Model model){
+    public String getCat(Model model) {
         model.addAttribute("categories", categoryService.getAllCategory());
         return "categories";
     }
 
     @GetMapping("/admin/categories/add")
-    public String getCatAdd(Model model){
+    public String getCatAdd(Model model) {
         model.addAttribute("category", new Category());
         return "categoriesAdd";
     }
 
     @PostMapping("/admin/categories/add")
-    public String postCatAdd(@ModelAttribute("category")Category category){
+    public String postCatAdd(@ModelAttribute("category") Category category) {
         categoryService.addCategory(category);
         return "redirect:/admin/categories";
     }
+
     @GetMapping("/admin/categories/delete/{id}")
-    public String deleteCat(@PathVariable int id){
+    public String deleteCat(@PathVariable int id) {
         categoryService.removeCetegoryById(id);
         return "redirect:/admin/categories";
     }
+
     @GetMapping("/admin/categories/update/{id}")
-    public String updateCat(@PathVariable int id,Model model){
+    public String updateCat(@PathVariable int id, Model model) {
         Optional<Category> category = categoryService.getCategoryById(id);
-    if(category.isPresent()){
-        model.addAttribute("category", category.get());
-        return "categoriesAdd";
-    }else
-        return "404";
+        if (category.isPresent()) {
+            model.addAttribute("category", category.get());
+            return "categoriesAdd";
+        } else
+            return "404";
     }
-//product section
-     @GetMapping("/admin/products")
-     public String products(Model model){
-     model.addAttribute("products", productService.getAllProduct());
-     return "products";
-}
+
+    //product section
+    @GetMapping("/admin/products")
+    public String products(Model model) {
+        model.addAttribute("products", productService.getAllProduct());
+        return "products";
+    }
+
     @GetMapping("/admin/products/add")
-    public String productAddGet(Model model){
-        model.addAttribute("productsDTO",new ProductDTO());
-        model.addAttribute("categories",categoryService.getAllCategory());
+    public String productAddGet(Model model) {
+        model.addAttribute("productDTO", new ProductDTO());
+        model.addAttribute("categories", categoryService.getAllCategory());
         return "productsAdd";
     }
     @PostMapping("/admin/products/add")
@@ -110,7 +114,7 @@ public class AdminController {
     public String updateProductGet(@PathVariable long id, Model model){
         Product product = productService.getProductById(id).get();
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(product.getId());  
+        productDTO.setId(product.getId());
         productDTO.setName(product.getName());
         productDTO.setCategoryId((product.getCategory().getId()));
         productDTO.setPrice(product.getPrice());
@@ -123,4 +127,5 @@ public class AdminController {
 
         return "productsAdd";
     }
+
 }
