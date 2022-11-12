@@ -1,8 +1,8 @@
 package com.example.Project.controller;
 
-import com.example.Project.service.CategoryService;
-import com.example.Project.service.ProductService;
 import com.example.Project.global.GlobalData;
+import com.example.Project.service.ResidenceService;
+import com.example.Project.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,41 +12,41 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class HomeController {
     @Autowired
-    CategoryService categoryService;
+    RoomTypeService roomTypeService;
     @Autowired
-    ProductService productService;
+    ResidenceService residenceService;
 
     @GetMapping({"/", "/home"})
     public String home(Model model){
-        model.addAttribute("cartCount", GlobalData.cart.size());
+        model.addAttribute("seatsCount", GlobalData.bookmarkedSeats.size());
         return "index";
 
     }
-    @GetMapping({"/shop"})
+    @GetMapping({"/homepage"})
     public String shop(Model model){
-        model.addAttribute("categories", categoryService.getAllCategory());
-        model.addAttribute("products", productService.getAllProduct());
-        model.addAttribute("cartCount", GlobalData.cart.size());
+        model.addAttribute("roomtypes", roomTypeService.getAllRoomTypes());
+        model.addAttribute("residences", residenceService.getAllResidences());
+        model.addAttribute("seatsCount", GlobalData.bookmarkedSeats.size());
 
-        return "shop";
+        return "homepage";
 
     }
-    @GetMapping({"/shop/category/{id}"})
+    @GetMapping({"/homepage/roomtype/{id}"})
     public String shopByCategory(Model model, @PathVariable int id){
-        model.addAttribute("categories", categoryService.getAllCategory());
-        model.addAttribute("products", productService.getAllProductsByCategoryId(id));
-        model.addAttribute("cartCount", GlobalData.cart.size());
+        model.addAttribute("roomtypes", roomTypeService.getAllRoomTypes());
+        model.addAttribute("residences", residenceService.getAllResidenceByRoomTypeId(id));
+        model.addAttribute("seatsCount", GlobalData.bookmarkedSeats.size());
 
-        return "shop";
+        return "homepage";
 
     }
-    @GetMapping({"/shop/viewproduct/{id}"})
+    @GetMapping({"/homepage/viewResidence/{id}"})
     public String viewProduct(Model model, @PathVariable int id){
-        model.addAttribute("product", productService.getProductById(id).get());
-        model.addAttribute("cartCount", GlobalData.cart.size());
+        model.addAttribute("residence", residenceService.getResidenceById(id).get());
+        model.addAttribute("seatsCount", GlobalData.bookmarkedSeats.size());
 
 
-        return "viewProduct";
+        return "viewResidence";
 
     }
 

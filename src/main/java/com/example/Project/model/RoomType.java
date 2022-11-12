@@ -6,10 +6,10 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class Category {
+public class RoomType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="category_id")
+    @Column(name="roomtype_id")
     private int id;
 
     private String name;

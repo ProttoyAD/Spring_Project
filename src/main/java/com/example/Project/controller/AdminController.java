@@ -1,13 +1,17 @@
 package com.example.Project.controller;
 
-import com.example.Project.dto.ProductDTO;
-import com.example.Project.model.Category;
-import com.example.Project.model.Product;
-import com.example.Project.service.CategoryService;
-import com.example.Project.service.ProductService;
+import com.example.Project.dto.ResidenceDTO;
+import com.example.Project.model.Residence;
+import com.example.Project.model.RoomType;
+import com.example.Project.service.RoomTypeService;
+import com.example.Project.service.ResidenceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,75 +23,76 @@ import java.util.Optional;
 
 @Controller
 public class AdminController {
-    public static String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/productImages";
+
+    public static String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/residenceImages";
+
     @Autowired
-    CategoryService categoryService;
+    RoomTypeService roomTypeService;
     @Autowired
-    ProductService productService;
+    ResidenceService residenceService;
 
     @GetMapping("/admin")
     public String adminHome() {
-
         return "adminHome";
     }
 
-    @GetMapping("/admin/categories")
-    public String getCat(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategory());
-        return "categories";
+    @GetMapping("/admin/roomtypes")
+    public String getRoomType(Model model) {
+        model.addAttribute("roomtypes", roomTypeService.getAllRoomTypes());
+        return "roomtypes";
     }
 
-    @GetMapping("/admin/categories/add")
-    public String getCatAdd(Model model) {
-        model.addAttribute("category", new Category());
-        return "categoriesAdd";
+    @GetMapping("/admin/roomtypes/add")
+    public String RoomTypeAdd(Model model) {
+        model.addAttribute("roomtype", new RoomType());
+        return "roomTypesAdd";
     }
 
-    @PostMapping("/admin/categories/add")
-    public String postCatAdd(@ModelAttribute("category") Category category) {
-        categoryService.addCategory(category);
-        return "redirect:/admin/categories";
+    @PostMapping("/admin/roomtypes/add")
+    public String postRoomTypeAdd(@ModelAttribute("roomtype") RoomType roomType) {
+        roomTypeService.addRoomType(roomType);
+        return "redirect:/admin/roomtypes";
     }
 
-    @GetMapping("/admin/categories/delete/{id}")
-    public String deleteCat(@PathVariable int id) {
-        categoryService.removeCetegoryById(id);
-        return "redirect:/admin/categories";
+    @GetMapping("/admin/roomtypes/delete/{id}")
+    public String deleteRoomType(@PathVariable int id) {
+        roomTypeService.removeRoomTypeById(id);
+        return "redirect:/admin/roomtypes";
     }
 
-    @GetMapping("/admin/categories/update/{id}")
-    public String updateCat(@PathVariable int id, Model model) {
-        Optional<Category> category = categoryService.getCategoryById(id);
+    @GetMapping("/admin/roomtypes/update/{id}")
+    public String updateRoomType(@PathVariable int id, Model model) {
+        Optional<RoomType> category = roomTypeService.getRoomTypeById(id);
         if (category.isPresent()) {
-            model.addAttribute("category", category.get());
-            return "categoriesAdd";
+            model.addAttribute("roomtype", category.get());
+            return "roomTypesAdd";
         } else
             return "404";
     }
 
-    //product section
-    @GetMapping("/admin/products")
-    public String products(Model model) {
-        model.addAttribute("products", productService.getAllProduct());
-        return "products";
+    //residence section
+    @GetMapping("/admin/residences")
+    public String residence(Model model) {
+        model.addAttribute("residences", residenceService.getAllResidences());
+        return "residences";
     }
 
-    @GetMapping("/admin/products/add")
+    @GetMapping("/admin/residences/add")
     public String productAddGet(Model model) {
-        model.addAttribute("productDTO", new ProductDTO());
-        model.addAttribute("categories", categoryService.getAllCategory());
-        return "productsAdd";
+        model.addAttribute("residenceDTO", new ResidenceDTO());
+        model.addAttribute("roomtypes", roomTypeService.getAllRoomTypes());
+        return "residenceAdd";
     }
-    @PostMapping("/admin/products/add")
-    public String productAddPost(@ModelAttribute("productDTO")ProductDTO productDTO, @RequestParam("productImage")MultipartFile file,
+    @PostMapping("/admin/residences/add")
+    public String residenceAddPost(@ModelAttribute("residenceDTO")ResidenceDTO residenceDTO, @RequestParam("residenceImage")MultipartFile file,
                                  @RequestParam("imgName")String imgName) throws IOException {
-        Product product = new Product();
-        product.setId(productDTO.getId());
-        product.setName(productDTO.getName());
-        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
-        product.setPrice(productDTO.getPrice());
-        product.setWeight(productDTO.getWeight());
-        product.setDescription(productDTO.getDescription());
+        Residence residence = new Residence();
+        residence.setId(residenceDTO.getId());
+        residence.setName(residenceDTO.getName());
+        residence.setRoomType(roomTypeService.getRoomTypeById(residenceDTO.getRoomtypeId()).get());
+        residence.setPrice(residenceDTO.getPrice());
+        residence.setDistance(residenceDTO.getDistance());
+        residence.setDescription(residence.getDescription());
         String imageUUID;
         if (!file.isEmpty()){
             imageUUID = file.getOriginalFilename();
@@ -98,34 +103,36 @@ public class AdminController {
             imageUUID = imgName;
 
         }
-        product.setImageName(imageUUID);
-        productService.addProduct(product);
+        residence.setImageName(imageUUID);
+        residenceService.addResidence(residence);
 
 
 
-        return "redirect:/admin/products";
+        return "redirect:/admin/residences";
     }
-    @GetMapping("/admin/product/delete/{id}")
+    @GetMapping("/admin/residence/delete/{id}")
     public String deleteProduct(@PathVariable long id){
-        productService.removeProductById(id);
-        return "redirect:/admin/products";
+        residenceService.removeResidenceById(id);
+        return "redirect:/admin/residences";
     }
-    @GetMapping("/admin/product/update/{id}")
+    @GetMapping("/admin/residence/update/{id}")
     public String updateProductGet(@PathVariable long id, Model model){
-        Product product = productService.getProductById(id).get();
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(product.getId());
-        productDTO.setName(product.getName());
-        productDTO.setCategoryId((product.getCategory().getId()));
-        productDTO.setPrice(product.getPrice());
-        productDTO.setWeight((product.getWeight()));
-        productDTO.setDescription(product.getDescription());
-        productDTO.setImageName(product.getImageName());
+        Residence residence =residenceService.getResidenceById(id).get();
+        ResidenceDTO residenceDTO = new ResidenceDTO();
+        residenceDTO.setId(residence.getId());
+        residenceDTO.setName(residence.getName());
+        residenceDTO.setRoomtypeId((residence.getRoomType().getId()));
+        residenceDTO.setPrice(residence.getPrice());
+        residenceDTO.setDistance((residence.getDistance()));
+        residenceDTO.setDescription(residence.getDescription());
+        residenceDTO.setImageName(residence.getImageName());
 
-        model.addAttribute("categories", categoryService.getAllCategory());
-        model.addAttribute("productDTO", productDTO);
+        model.addAttribute("roomtypes", roomTypeService.getAllRoomTypes());
+        model.addAttribute("residenceDTO", residenceDTO);
 
-        return "productsAdd";
+        return "residenceAdd";
     }
+
 
 }
+

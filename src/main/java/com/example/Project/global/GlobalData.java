@@ -1,13 +1,13 @@
 package com.example.Project.global;
 
-import com.example.Project.model.Product;
+import com.example.Project.model.Residence;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GlobalData {
-    public static List<Product> cart;
+    public static List<Residence> bookmarkedSeats;
     static {
-        cart = new ArrayList<Product>();
+        bookmarkedSeats = new ArrayList<Residence>();
     }
 }
