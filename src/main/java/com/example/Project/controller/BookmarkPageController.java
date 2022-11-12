@@ -33,10 +33,10 @@ public class BookmarkPageController {
         GlobalData.bookmarkedSeats.remove(index);
         return "redirect:/bookmarkedSeats";
     }
-    @GetMapping("/booking")
+    @GetMapping("/checkout")
     public String checkout(Model model){
         model.addAttribute("total",GlobalData.bookmarkedSeats.stream().mapToDouble(Residence::getPrice).sum());
-        return "booking";
+        return "checkout";
 
     }
 }
